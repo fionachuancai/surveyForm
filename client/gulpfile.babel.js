@@ -1,23 +1,18 @@
 var gulp = require('gulp');
-var babel = require('gulp-babel');
 var watch = require('gulp-watch');
+var webpack = require('webpack-stream');
 
+var webpackConfig = require('./webpack.config.js');
 
-gulp.task('transform', () => {
+gulp.task('default', function() {
   return gulp.src('src/**/*.js')
-    .pipe(babel())
-    .pipe(gulp.dest('lib'));
-});
-
-gulp.task('watch', () => {
-  return gulp.src('src/**/*.js')
-    .pipe(watch('src/**/*.js', {
-      verbose: true
+    .pipe(webpack({
+      config : webpackConfig
     }))
-    .pipe(babel())
-    .pipe(gulp.dest('lib'));
+    .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('default', () => {
-  gulp.start('transform');
+gulp.task('watch', function () {
+  gulp.watch('src/**/*.js', ['default']);
 });
+
