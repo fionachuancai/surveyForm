@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Row, Button, Form, FormGroup, Label, Input, FormText, Col, Alert } from 'reactstrap';
+import Footer from './footer';
 
 class App extends Component {
     constructor() {
@@ -89,7 +90,10 @@ class App extends Component {
                 <Row>
                     <Col xs="1" sm="3" md="1" lg="2"></Col>
                     <Col xs="10" sm="6" md="10" lg="9">
-                        {this.state.submitted ? thankYou : (this.state.answered ? step2 : step1)}
+                        <div>
+                            {this.state.submitted ? thankYou : (this.state.answered ? step2 : step1)}
+                            <Footer />
+                        </div>
                     </Col>
                     <Col xs="1" sm="3" md="1" lg="2"></Col>
                 </Row>
