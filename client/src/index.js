@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Row, Button, Form, FormGroup, Label, Input, FormText, Col } from 'reactstrap';
+import { Row, Button, Form, FormGroup, Label, Input, FormText, Col, Alert } from 'reactstrap';
 
 class App extends Component {
     constructor() {
@@ -12,12 +12,13 @@ class App extends Component {
             location: '',
             time: '',
             feedback: '',
-            answered: false
+            answered: false,
+            submitted: false,
         };
     }
 
     componentDidMount(){
-        this.setState({answered : false});
+        this.setState({answered : false, submitted : false});
     }
 
     render() {
@@ -81,16 +82,17 @@ class App extends Component {
             </Form>
         );
 
+        const thankYou = (<h1>Thank you!!</h1>);
+
         return (
             <div>
                 <Row>
                     <Col xs="1" sm="3" md="1" lg="2"></Col>
                     <Col xs="10" sm="6" md="10" lg="9">
-                        {this.state.answered ? step2 : step1}
+                        {this.state.submitted ? thankYou : (this.state.answered ? step2 : step1)}
                     </Col>
                     <Col xs="1" sm="3" md="1" lg="2"></Col>
                 </Row>
-                
             </div>
         );
     }
@@ -133,6 +135,7 @@ class App extends Component {
             this.state.time,
             this.state.feedback
         );
+        this.setState({submitted : true});
     }
 
     submitForm(title, userName, birthDay, location, time, feedback) {
@@ -145,7 +148,7 @@ class App extends Component {
             currentTime: time,
             feedback: feedback
         }).then(function (response) {
-            // console.log(response);
+            
         }).catch(function (error) {
             console.log(error);
         });
