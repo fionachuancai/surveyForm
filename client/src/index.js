@@ -3,49 +3,101 @@ import ReactDOM from 'react-dom';
 import { Row, Button, Form, FormGroup, Label, Input, FormText, Col } from 'reactstrap';
 
 class App extends Component {
-  constructor() {
-    super();
-    this.state = { title : '', userName: '', birthDay: '' };
+    constructor() {
+        super();
+        this.state = { 
+            title : '',
+            userName: '',
+            birthDay: '',
+            location: '',
+            time: '',
+            feedback: '',
+            answered: false
+        };
+    }
+
+    componentDidMount(){
+        this.setState({answered : false});
     }
 
     render() {
+
+        const step1 = (
+            <Form>
+                <FormGroup>
+                    <Label for="select">Title</Label>
+                    <Input type="select" name="select" id="select" value={this.state.title} onChange={this.updateTitle.bind(this)}>
+                        <option>Miss</option>
+                        <option>Mr</option>
+                        <option>Mrs</option>
+                        <option>Ms</option>
+                        <option>Mx</option>
+                        <option>Other</option>
+                    </Input>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="userName">Name</Label>
+                    <Input id="userName" value={this.state.userName} onChange={this.updateUsername.bind(this)}/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="date">Date of Birth</Label>
+                    <Input
+                        type="date"
+                        name="date"
+                        id="date"
+                        placeholder="choose date"
+                        value={this.state.birthDay} 
+                        onChange={this.updateBirthday.bind(this)} />
+                </FormGroup>
+                <Button onClick={this.updateAnswerStatus.bind(this)}>Next</Button>
+            </Form>
+        );
+
+        const step2 = (
+            <Form>
+                <FormGroup>
+                    <Label for="location">Current Location</Label>
+                    <Input id="location" value={this.state.location} onChange={this.updateLocation.bind(this)}/>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="time">Current Time</Label>
+                    <Input
+                        type="time"
+                        name="time"
+                        id="time"
+                        placeholder="current time"
+                        value={this.state.time}
+                        onChange={this.updateTime.bind(this)} />
+                </FormGroup>
+                <FormGroup>
+                    <Label for="feedback">User Feedback</Label>
+                    <Input type="textarea" id="feedback" value={this.state.feedback} onChange={this.updateFeedback.bind(this)}/>
+                </FormGroup>
+                <FormGroup check row>
+                    <Col sm={{ size: 10, offset: 2 }}>
+                        <Button onClick={this.handleSubmit.bind(this)}>Submit</Button>
+                    </Col>
+                </FormGroup>
+            </Form>
+        );
+
         return (
             <div>
                 <Row>
                     <Col xs="1" sm="3" md="1" lg="2"></Col>
                     <Col xs="10" sm="6" md="10" lg="9">
-                        <Form>
-                            <FormGroup>
-                              <Label for="exampleSelect">Title</Label>
-                              <Input type="select" name="select" id="exampleSelect" value={this.state.title} onChange={this.updateTitle.bind(this)}>
-                                <option>Miss</option>
-                                <option>Mr</option>
-                                <option>Mrs</option>
-                                <option>Ms</option>
-                                <option>Mx</option>
-                                <option>Other</option>
-                              </Input>
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="userName">Name</Label>
-                                <Input id="userName" value={this.state.userName} onChange={this.updateUsername.bind(this)}/>
-                            </FormGroup>
-                            <FormGroup>
-                                <Label for="exampleDate">Date</Label>
-                                <Input type="date" name="date" id="exampleDate" placeholder="date placeholder" value={this.state.birthDay}  onChange={this.updateBirthday.bind(this)}/>
-                            </FormGroup>
-                            <FormGroup check row>
-                                <Col sm={{ size: 10, offset: 2 }}>
-                                    <Button onClick={this.handleSubmit.bind(this)}>Submit</Button>
-                                </Col>
-                            </FormGroup>
-                        </Form>
+                        {this.state.answered ? step2 : step1}
                     </Col>
                     <Col xs="1" sm="3" md="1" lg="2"></Col>
                 </Row>
                 
             </div>
         );
+    }
+
+    updateAnswerStatus(e){
+        let current = this.state.answered;
+        this.setState({answered : !current});
     }
 
     updateTitle(e){
@@ -59,15 +111,39 @@ class App extends Component {
         this.setState({birthDay : e.target.value});
     }
 
-    handleSubmit(e){
-        console.log(this.state);
-        this.submitForm(this.state.title, this.state.userName, this.state.birthDay);
+    updateLocation(e){
+        this.setState({location : e.target.value});
     }
 
-    submitForm(title, userName, password) {
+    updateTime(e){
+        this.setState({time : e.target.value});
+    }
+
+    updateFeedback(e){
+        this.setState({feedback : e.target.value});
+    }
+
+    handleSubmit(e){
+        console.log(this.state);
+        this.submitForm(
+            this.state.title,
+            this.state.userName,
+            this.state.birthDay,
+            this.state.location,
+            this.state.time,
+            this.state.feedback
+        );
+    }
+
+    submitForm(title, userName, birthDay, location, time, feedback) {
         axios.post('http://localhost:8086/api/submitSurvey',
         {
-            title: title, userName : userName, password : password
+            title: title,
+            userName : userName,
+            birthDay : birthDay,
+            currentLocation: location,
+            currentTime: time,
+            feedback: feedback
         }).then(function (response) {
             // console.log(response);
         }).catch(function (error) {
